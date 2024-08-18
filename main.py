@@ -65,10 +65,10 @@ def ask_user_product_index(store_obj):
         index = input('Which product # do you want? ').strip()
         if index == "":
             return index
-        elif index in [str(num) for num in list(range(1, len(product_list) + 1))]:
+        if index in [str(num) for num in list(range(1, len(product_list) + 1))]:
             return int(index) - 1
-        print('\u001b[31mProduct # should be in a range'
-              'from 1 to {}\u001b[0m'.format(len(product_list)))
+        print('\u001b[31mProduct # should be in a range '
+              f'from 1 to {len(product_list)}\u001b[0m')
 
 
 def ask_user_product_quantity(store_obj, product_index):
@@ -82,7 +82,7 @@ def ask_user_product_quantity(store_obj, product_index):
     in_store_quantity = store_obj.get_all_products()[product_index].get_quantity()
     while True:
         quantity = input('What amount do you want? ').strip()
-        if quantity == "" or quantity == "0":
+        if quantity in ["", "0"]:
             return ""
         try:
             quantity = int(quantity)
@@ -90,9 +90,8 @@ def ask_user_product_quantity(store_obj, product_index):
             print('\u001b[31mAmount should be a positive integer\u001b[0m')
         if quantity <= in_store_quantity:
             return quantity
-        else:
-            print('\u001b[31mOnly {} {} left in the store\u001b[0m'
-                  .format(in_store_quantity, store_obj.get_all_products()[product_index].name()))
+        print(f'\u001b[31mOnly {in_store_quantity} '
+              f'{store_obj.get_all_products()[product_index].name()} left in the store\u001b[0m')
 
 
 def make_order(store_obj):
@@ -114,8 +113,8 @@ def make_order(store_obj):
             continue
         total_price += store_obj.order([(all_products[index], quantity)])
         order.append((index, quantity))
-        print('\033[0;32m{} {} was added to your order'.format(quantity, all_products[index].name()))
-        print('Order total price so far is ${}\033[00m'.format(total_price))
+        print(f'\033[0;32m{quantity} {all_products[index].name()} was added to your order')
+        print(f'Order total price so far is ${total_price}\033[00m')
     # converting order list into user-friendly list of ordered items
     order_dict = {}
     for index, quantity in order:
@@ -124,13 +123,17 @@ def make_order(store_obj):
             order_dict[product] += quantity
         else:
             order_dict[product] = quantity
-    ordered_products = "\n".join('\t{} items: {}'.format(quantity, product)
+    ordered_products = "\n".join(f'\t{quantity} items: {product}'
                                  for product, quantity in order_dict.items())
-    print("\033[0;32mOrder made! You've ordered: \n{}\n"
-          "Total payment: ${}\033[00m".format(ordered_products, total_price))
+    print(f"\033[0;32mOrder made! You've ordered: \n{ordered_products}\n"
+          f"Total payment: ${total_price}\033[00m")
 
 
 def start(store_obj):
+    """Defines function dictionary, implement dispatcher function
+    :param store_obj: Store class object
+    :return: None
+    """
     func_dict = {
         "1": ["List all products in store", print_all_products],
         "2": ["Show total amount in store", print_total_amount_in_store],
@@ -143,8 +146,7 @@ def start(store_obj):
         if func_key == "4":
             print('\033[0;32mThanks fo visiting "Best-Buy" store! Bye.\033[00m')
             break
-        else:
-            func_dict[func_key][1](store_obj)
+        func_dict[func_key][1](store_obj)
 
 
 def main():
