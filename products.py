@@ -10,7 +10,7 @@ class Product:
         if not name:
             raise ValueError('Product name can not be empty.')
         self._name = name
-        if not (isinstance(price, int) or isinstance(price, float)) or price < 0:
+        if not isinstance(price, (int, float)) or price < 0:
             raise ValueError('Price should be a positive number.')
         self._price = price
         if not isinstance(quantity, int) or quantity < 0:
