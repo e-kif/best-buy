@@ -17,6 +17,7 @@ class Product:
             raise ValueError('Quantity should be a positive number.')
         self._quantity = quantity
         self._active = True
+        self._promotions = set()
 
     def get_quantity(self):
         """Return quantity of a product instance"""
@@ -29,6 +30,9 @@ class Product:
         self._quantity = quantity
         if self._quantity == 0:
             self.deactivate()
+
+    def get_price(self):
+        return self._price
 
     def is_active(self):
         """Checks if product is active. Returns bool value"""
@@ -44,7 +48,10 @@ class Product:
 
     def show(self):
         """Returns product info as f-string"""
-        return f'{self._name}, Price: ${self._price}, Quantity: {self._quantity}'
+        result = f'{self._name}, Price: ${self._price}, Quantity: {self._quantity}'
+        if self._promotions:
+            result += " ".join([", " + str(promo_name) for promo_name in self._promotions])
+        return result
 
     def name(self):
         """Returns product name"""
@@ -64,6 +71,12 @@ class Product:
         self.set_quantity(self._quantity - quantity)
         return quantity * self._price
 
+    def set_promotion(self, promotion):
+        self._promotions.add(promotion)
+
+    def remove_promotion(self, promotion):
+        self._promotions.remove(promotion)
+
 
 class NonStockedProduct(Product):
 
@@ -81,8 +94,8 @@ class NonStockedProduct(Product):
 
 class LimitedProduct(Product):
 
-    def __init__(self, name, price, quantity, maximum):
-        super().__init__(name, price, quantity=0)
+    def __init__(self, name, price, maximum, quantity=0):
+        super().__init__(name, price, quantity)
         self._maximum = maximum
 
     def show(self):
