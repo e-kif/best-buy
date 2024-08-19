@@ -4,7 +4,7 @@ class Product:
     def __init__(self, name, price, quantity):
         """Initialises an instance of Product class, assigns instance variables
         :param name: string
-        :param price: float or integer
+        :param price: integer or float
         :param quantity: integer
         """
         if not name:
@@ -63,3 +63,33 @@ class Product:
             raise ValueError(f'Quantity can not be bigger than items in store ({self._quantity}).')
         self.set_quantity(self._quantity - quantity)
         return quantity * self._price
+
+
+class NonStockedProduct(Product):
+
+    def __init__(self, name, price):
+        super().__init__(name, price, quantity=0)
+
+    def show(self):
+        return super().show().replace(f'Quantity: {self._quantity}', 'Quantity: Unlimited')
+
+    def buy(self, quantity):
+        if not isinstance(quantity, int) or quantity <= 0:
+            raise ValueError('Quantity should be a positive integer.')
+        return quantity * self._price
+
+
+class LimitedProduct(Product):
+
+    def __init__(self, name, price, quantity, maximum):
+        super().__init__(name, price, quantity=0)
+        self._maximum = maximum
+
+    def show(self):
+        return super().show().replace(f'Quantity: {self._quantity}',
+                                      f'Limited to {self._maximum} per order!')
+
+    def buy(self, quantity):
+        if quantity <= self._maximum:
+            return quantity * self._price
+        return f'Error while make order! Only {self._maximum} {self.name()} is allowed!'
