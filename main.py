@@ -37,12 +37,12 @@ def print_total_amount_in_store(store_obj):
     """
     total_items = store_obj.get_total_quantity()
     if total_items == 1:
-        print(f'\033[0;32mTTotal of {total_items} item in store\033[00m')
+        print(f'\033[0;32mTotal of {total_items} item in store\033[00m')
     else:
         print(f'\033[0;32mTotal of {total_items} items in store\033[00m')
 
 
-def ask_user_function_numer(func_dict):
+def ask_user_function_number(func_dict):
     """Gets a function number key from user for dispatcher function
     :param func_dict: dictionary for dispatcher function
     :return: string
@@ -143,7 +143,7 @@ def start(store_obj):
     }
     while True:
         print_store_menu(func_dict)
-        func_key = ask_user_function_numer(func_dict)
+        func_key = ask_user_function_number(func_dict)
         if func_key == "4":
             print('\033[0;32mThanks fo visiting "Best-Buy" store! Bye.\033[00m')
             break
