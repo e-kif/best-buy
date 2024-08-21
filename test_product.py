@@ -35,8 +35,8 @@ def test_float_quantity():
 def test_product_becomes_inactive():
     # Test that when a product reaches 0 quantity, it becomes inactive
     mac = Product("Macbook Air M2", price=1212, quantity=2)
-    mac.set_quantity(0)
-    assert not mac.is_active(), "Product didn't become inactive when reaches 0 quantity"
+    mac.quantity = 0
+    assert not mac.is_active, "Product didn't become inactive when reaches 0 quantity"
 
 
 def test_product_buy():
@@ -46,7 +46,7 @@ def test_product_buy():
     buy = 11
     mac = Product("Macbook Air M2", price=price, quantity=quantity)
     assert mac.buy(11) == price*buy, "Order price calculated wrong"
-    assert mac.get_quantity() == quantity - buy, "Product purchase results in wrong quantity left"
+    assert mac.quantity == quantity - buy, "Product purchase results in wrong quantity left"
 
 
 def test_buy_too_many():

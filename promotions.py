@@ -9,7 +9,7 @@ class Promotion(ABC):
         self._name = name
 
     def __str__(self):
-        """magic method for print() ans str() functions"""
+        """magic method for print() and str() functions"""
         return self._name
 
     @abstractmethod
@@ -24,7 +24,7 @@ class SecondHalfPrice(Promotion):
     def apply_promotion(self, product, quantity):
         """calculates price multiplier of the promotion depending on quantity of product"""
         if quantity >= 2:
-            print(f'\33[34mApplying "{self._name}" promotion for {product.name()}\033[00m')
+            print(f'\33[34mApplying "{self._name}" promotion for {product.name}\033[00m')
         return ((quantity // 2) * 1.5 + quantity % 2) / quantity
 
 
@@ -34,7 +34,7 @@ class ThirdOneFree(Promotion):
     def apply_promotion(self, product, quantity):
         """calculates price multiplier of the promotion depending on quantity of product"""
         if quantity >= 3:
-            print(f'\33[34mApplying "{self._name}" promotion for {product.name()}\033[00m')
+            print(f'\33[34mApplying "{self._name}" promotion for {product.name}\033[00m')
         return ((quantity // 3) * 2 + quantity % 3) / quantity
 
 
@@ -48,5 +48,5 @@ class PercentDiscount(Promotion):
 
     def apply_promotion(self, product, quantity):
         """calculates price multiplier of the promotion depending on quantity of product and discount percent"""
-        print(f'\33[34mApplying "{self._name}" promotion for {product.name()}\033[00m')
+        print(f'\33[34mApplying "{self._name}" promotion for {product.name}\033[00m')
         return (self._percent * quantity / 100) / quantity

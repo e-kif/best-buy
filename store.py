@@ -8,6 +8,14 @@ class Store:
         """Store instance initialization"""
         self._list_of_products = product_list
 
+    def __contains__(self, product):
+        """Magick method that returns bool weather product is in store"""
+        return product in self._list_of_products
+
+    def __add__(self, store):
+        """Operator overload. Returns a new store as a sum of two stores"""
+        return Store(self._list_of_products + store.all_products)
+
     def add_product(self, product):
         """adds new product to the store"""
         if product in self._list_of_products:
@@ -18,13 +26,15 @@ class Store:
         """Removes a product from the store"""
         self._list_of_products.remove(product)
 
-    def get_total_quantity(self):
+    @property
+    def total_quantity(self):
         """Returns quantity of all products left is store as integer"""
-        return sum(product.get_quantity() for product in self._list_of_products)
+        return sum(product.quantity for product in self._list_of_products)
 
-    def get_all_products(self):
+    @property
+    def all_products(self):
         """Returns list of all active products left in store"""
-        return [product for product in self._list_of_products if product.is_active()]
+        return [product for product in self._list_of_products if product.is_active]
 
     def order(self, shopping_list, product_quantity_reduction=True):
         """Reduced product amount left is store, returns total price of the order

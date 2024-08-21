@@ -23,16 +23,16 @@ def print_all_products(store_obj, order_dict={}):
     :return: None
     """
     print("-" * 5)
-    store_products = store_obj.get_all_products()
-    if store_obj.get_total_quantity() > 0:
+    store_products = store_obj.all_products
+    if store_obj.total_quantity > 0:
         for index in range(len(store_products)):
             if store_products[index] in order_dict:
                 if isinstance(store_products[index], (products.LimitedProduct, products.NonStockedProduct)):
-                    print(f'{index + 1}. {store_products[index].show()}')
+                    print(f'{index + 1}. {store_products[index]}')
                 else:
                     print(f'{index + 1}. {store_products[index].show(order_dict[store_products[index]])}')
             else:
-                print(f'{index + 1}. {store_products[index].show()}')
+                print(f'{index + 1}. {str(store_products[index])}')
     else:
         print("\u001b[31mCurrently we don't have any products. Come back later!\u001b[0m")
     print("-" * 5)
@@ -43,7 +43,7 @@ def print_total_amount_in_store(store_obj):
     :param store_obj: Store class object
     :return: None
     """
-    total_items = store_obj.get_total_quantity()
+    total_items = store_obj.total_quantity
     if total_items == 1:
         print(f'\033[0;32mTotal of {total_items} item in store\033[00m')
     else:
@@ -68,7 +68,7 @@ def ask_user_product_index(store_obj, order_dict={}):
     :param order_dict: order dictionary so far
     :return: integer
     """
-    product_list = store_obj.get_all_products()
+    product_list = store_obj.all_products
     while True:
         print_all_products(store_obj, order_dict)
         print('When you want to finish your order, enter empty text.')
@@ -99,21 +99,21 @@ def ask_user_product_quantity(store_obj, product_index, order_dict={}):
             quantity = int(quantity)
         except ValueError:
             print('\u001b[31mAmount should be a positive integer\u001b[0m')
-        current_product = store_obj.get_all_products()[product_index]
+        current_product = store_obj.all_products[product_index]
         already_ordered = order_dict.get(current_product, 0)
-        in_store_quantity = current_product.get_quantity() - already_ordered
+        in_store_quantity = current_product.quantity - already_ordered
         if isinstance(current_product, (products.NonStockedProduct, products.LimitedProduct)):
             in_store_quantity = quantity
         if (isinstance(current_product, products.LimitedProduct)
-                and already_ordered + quantity > current_product.get_maximum()):
-            print(f'\u001b[31mMaximum amount of {current_product.show().split(",")[0]} per order '
-                  f'is {current_product.get_maximum()}. '
+                and already_ordered + quantity > current_product.maximum):
+            print(f'\u001b[31mMaximum amount of {str(current_product).split(",")[0]} per order '
+                  f'is {current_product.maximum}. '
                   f'You already have {order_dict.get(current_product, 0)} in your order.\u001b[0m')
             continue
         if quantity <= in_store_quantity:
             return quantity
         print(f'\u001b[31mOnly {in_store_quantity} '
-              f'{store_obj.get_all_products()[product_index].name()} left in the store\u001b[0m')
+              f'{store_obj.all_products[product_index].name} left in the store\u001b[0m')
 
 
 def calculate_order_price_and_order_dict(store_obj, orders, product_quantity_reduction=True):
@@ -125,7 +125,7 @@ def calculate_order_price_and_order_dict(store_obj, orders, product_quantity_red
     :return: tuple (float, dict)
     """
     order_dict = {}
-    all_products = store_obj.get_all_products()
+    all_products = store_obj.all_products
     order_price = 0
     for index, quantity in orders:
         product = all_products[index]
@@ -145,7 +145,7 @@ def make_order(store_obj):
     :param store_obj: Store class object
     :return: None
     """
-    all_products = store_obj.get_all_products()
+    all_products = store_obj.all_products
     order = []
     order_dict = {}
     while True:
@@ -155,12 +155,12 @@ def make_order(store_obj):
         quantity = ask_user_product_quantity(store_obj, index, order_dict)
         if quantity == "":
             continue
-        print(f'\033[0;32m{quantity} {all_products[index].name()} was added to your order\033[00m')
+        print(f'\033[0;32m{quantity} {all_products[index].name} was added to your order\033[00m')
         order.append((index, quantity))
         total_price, order_dict = calculate_order_price_and_order_dict(store_obj, order, False)
         print(f'\033[0;32mOrder total price so far is ${total_price}\033[00m')
     if order:
-        ordered_products = "\n".join(f'\t{quantity} items: {product.name()}'
+        ordered_products = "\n".join(f'\t{quantity} items: {product.name}'
                                      for product, quantity in order_dict.items())
         print(f"\033[0;32mOrder made! You've ordered: \n{ordered_products}\n\033[00m")
         total_price = calculate_order_price_and_order_dict(store_obj, order, True)[0]
