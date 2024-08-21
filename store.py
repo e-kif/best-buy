@@ -1,3 +1,6 @@
+import products
+
+
 class Store:
     """Store class initiation and methods definitions"""
 
@@ -23,14 +26,20 @@ class Store:
         """Returns list of all active products left in store"""
         return [product for product in self._list_of_products if product.is_active()]
 
-    def order(self, shopping_list):
+    def order(self, shopping_list, product_quantity_reduction=True):
         """Reduced product amount left is store, returns total price of the order
         :param shopping_list: list of tuples (product, quantity)
+        :param product_quantity_reduction: bool
         :return: float or integer
         """
         total_price = 0
         for product, quantity in shopping_list:
             if product not in self._list_of_products:
                 raise ValueError(f'There is no {product} in the store.')
-            total_price += [pr.buy(quantity) for pr in self._list_of_products if pr == product][0]
+            for current_product in self._list_of_products:
+                if current_product == product:
+                    if isinstance(current_product, (products.NonStockedProduct, products.LimitedProduct)):
+                        total_price += current_product.buy(quantity)
+                    else:
+                        total_price += current_product.buy(quantity, product_quantity_reduction)
         return total_price
