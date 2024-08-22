@@ -15,7 +15,7 @@ def print_store_menu(functions_dict):
         print(f'{key}. {value[0]}')
 
 
-def print_all_products(store_obj, order_dict={}):
+def print_all_products(store_obj, order_dict=()):
     """Prints information about all available product in store_obj.
     Prints reduced amount of products if called during order creation
     :param store_obj: Store class object
@@ -62,7 +62,7 @@ def ask_user_function_number(func_dict):
         print('\u001b[31mError with your choice! Try again!\u001b[0m')
 
 
-def ask_user_product_index(store_obj, order_dict={}):
+def ask_user_product_index(store_obj, order_dict=()):
     """Shows products info, gets product index from user input
     :param store_obj: class Store object
     :param order_dict: order dictionary so far
@@ -81,7 +81,7 @@ def ask_user_product_index(store_obj, order_dict={}):
               f'from 1 to {len(product_list)}\u001b[0m')
 
 
-def ask_user_product_quantity(store_obj, product_index, order_dict={}):
+def ask_user_product_quantity(store_obj, product_index, order_dict=()):
     """Checks available quantity of a product in a store,
     gets quantity of a product for an order from user input,
     checks if desired quantity is available,
@@ -160,8 +160,18 @@ def make_order(store_obj):
         total_price, order_dict = calculate_order_price_and_order_dict(store_obj, order, False)
         print(f'\033[0;32mOrder total price so far is ${total_price}\033[00m')
     if order:
+        shipment_info = ""
+        stockable_in_order = any(isinstance(prod, products.Product)
+                             for prod in order_dict if not isinstance(prod, products.NonStockedProduct))
+        if all_products[4] not in order_dict and stockable_in_order:
+            add_shipping = input('\33[34mYou have some stockable products in your order, but not the shipping.\n'
+                                 'Would you like to add a shipping to your order '
+                                 f'(+${all_products[-1].price})? Yes/no: \033[00m').strip().lower()
+            if add_shipping in ('yes', 'y', ''):
+                order.append((len(all_products) - 1, 1))
+                shipment_info = f'\n\t1 item: {all_products[-1].name}'
         ordered_products = "\n".join(f'\t{quantity} items: {product.name}'
-                                     for product, quantity in order_dict.items())
+                                     for product, quantity in order_dict.items()) + shipment_info
         print(f"\033[0;32mOrder made! You've ordered: \n{ordered_products}\n\033[00m")
         total_price = calculate_order_price_and_order_dict(store_obj, order, True)[0]
         print(f"\033[0;32mTotal payment: ${total_price}\033[00m")
