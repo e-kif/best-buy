@@ -49,4 +49,4 @@ class PercentDiscount(Promotion):
     def apply_promotion(self, product, quantity):
         """calculates price multiplier of the promotion depending on quantity of product and discount percent"""
         print(f'\33[34mApplying "{self._name}" promotion for {product.name}\033[00m')
-        return (self._percent * quantity / 100) / quantity
+        return (100 - self._percent) / 100
